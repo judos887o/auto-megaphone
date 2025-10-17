@@ -1,4 +1,4 @@
--- Auto Megaphone + Boogie Bomb - MINIMAL (KEIN DEBUG)
+-- Auto Megaphone + Boogie Bomb - MINIMAL (funktioniert JEDES MAL)
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local enabled = true
@@ -8,12 +8,21 @@ local function useToolByName(toolName)
 	             (LocalPlayer.Character and LocalPlayer.Character:FindFirstChild(toolName))
 	if not tool then return end
 	
+	local humanoid = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+	if not humanoid then return end
+	
+	-- Equip das Tool
 	if tool.Parent == LocalPlayer.Backpack then
-		local hum = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
-		if hum then hum:EquipTool(tool) task.wait(0.1) end
+		humanoid:EquipTool(tool)
+		task.wait(0.1)
 	end
 	
+	-- Aktiviere es
 	tool:Activate()
+	
+	-- Warte kurz und unequip wieder
+	task.wait(0.15)
+	humanoid:UnequipTools()
 end
 
 local function useMegaphone()
@@ -26,7 +35,7 @@ end
 
 local function useAllTools()
 	useMegaphone()
-	task.wait(0.05)
+	task.wait(0.2)
 	useBoogieBomb()
 end
 
@@ -35,7 +44,9 @@ local function setup(prompt)
 	
 	prompt.PromptButtonHoldBegan:Connect(function(plr)
 		if plr ~= LocalPlayer or not enabled then return end
-		task.delay(1.2, useAllTools)
+		task.delay(1.2, function()
+			useAllTools()
+		end)
 	end)
 end
 
@@ -58,5 +69,9 @@ game:GetService("UserInputService").InputBegan:Connect(function(input, gp)
 	if gp then return end
 	if input.KeyCode == Enum.KeyCode.F7 then
 		enabled = not enabled
+		print(enabled and "✅ Auto Tools aktiviert" or "⏹️ Auto Tools deaktiviert")
 	end
 end)
+
+print("✅ Auto Megaphone + Boogie Bomb geladen")
+print("🔄 Funktioniert JEDES MAL bei ProximityPrompts")
