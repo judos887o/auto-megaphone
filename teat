@@ -1,19 +1,33 @@
--- Auto Megaphone - MINIMAL (KEIN DEBUG)
+-- Auto Megaphone + Boogie Bomb - MINIMAL (KEIN DEBUG)
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local enabled = true
 
-local function useMegaphone()
-	local megaphone = LocalPlayer.Backpack:FindFirstChild("Megaphone") or 
-	                  (LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Megaphone"))
-	if not megaphone then return end
+local function useToolByName(toolName)
+	local tool = LocalPlayer.Backpack:FindFirstChild(toolName) or 
+	             (LocalPlayer.Character and LocalPlayer.Character:FindFirstChild(toolName))
+	if not tool then return end
 	
-	if megaphone.Parent == LocalPlayer.Backpack then
+	if tool.Parent == LocalPlayer.Backpack then
 		local hum = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
-		if hum then hum:EquipTool(megaphone) task.wait(0.1) end
+		if hum then hum:EquipTool(tool) task.wait(0.1) end
 	end
 	
-	megaphone:Activate()
+	tool:Activate()
+end
+
+local function useMegaphone()
+	useToolByName("Megaphone")
+end
+
+local function useBoogieBomb()
+	useToolByName("Boogie Bomb")
+end
+
+local function useAllTools()
+	useMegaphone()
+	task.wait(0.05)
+	useBoogieBomb()
 end
 
 local function setup(prompt)
@@ -21,7 +35,7 @@ local function setup(prompt)
 	
 	prompt.PromptButtonHoldBegan:Connect(function(plr)
 		if plr ~= LocalPlayer or not enabled then return end
-		task.delay(1.2, useMegaphone)
+		task.delay(1.2, useAllTools)
 	end)
 end
 
